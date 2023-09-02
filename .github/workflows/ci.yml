@@ -1,0 +1,38 @@
+name: "ci"
+
+on:
+  repository_dispatch:
+    types: [update-request]
+  #push:
+  #  branches:
+  #    - "main"
+jobs:
+  testhello:
+    name: "Test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print
+        run: echo "Executed!"
+  #sync2gitee:
+  #  name: "Sync to Gitee"
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Organization mirror
+  #      uses: Yikun/hub-mirror-action@master
+  #      with:
+  #        src: github/preppipe
+  #        dst: gitee/preppipe
+  #        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+  #        dst_token: ${{ secrets.GITEE_TOKEN }}
+  #        account_type: org
+  #        force_update: true
+
+  #collect-releases:
+  #  name: "Refresh and sync"
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: robinraju/release-downloader@v1.8
+  #      with:
+  #        repository:
+
