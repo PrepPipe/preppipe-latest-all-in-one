@@ -3,9 +3,8 @@ name: "ci"
 on:
   repository_dispatch:
     types: [update-request]
-  #push:
-  #  branches:
-  #    - "main"
+  workflow_dispatch:
+
 jobs:
   testhello:
     name: "Test"
@@ -13,26 +12,38 @@ jobs:
     steps:
       - name: Print
         run: echo "Executed!"
-  #sync2gitee:
-  #  name: "Sync to Gitee"
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - name: Organization mirror
-  #      uses: Yikun/hub-mirror-action@master
-  #      with:
-  #        src: github/preppipe
-  #        dst: gitee/preppipe
-  #        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-  #        dst_token: ${{ secrets.GITEE_TOKEN }}
-  #        account_type: org
-  #        force_update: true
-
-  #collect-releases:
-  #  name: "Refresh and sync"
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - uses: robinraju/release-downloader@v1.8
-  #      with:
-  #        repository:
-
+  buildrelease:
+    name: "Build release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "develop"
+      - name: "Download main program"
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: "PrepPipe/preppipe-python"
+          tag: "latest"
+          fileName: "preppipe_cli-windows-x64.exe"
+          tarBall: false
+          zipBall: false
+          out-file-path: "dist"
+      - name: "Download GUI"
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: "PrepPipe/preppipe_gui"
+          tag: "latest"
+          fileName: "preppipe_gui-windows-x64.7z"
+          tarBall: false
+          zipBall: false
+          out-file-path: "dist"
+      - name: "Update main branch"
+        shell: bash
+        run: |
+          git checkout --orphan latest_branch
+          git add -A
+          git commit -am "Auto-update"
+          git branch -D main
+          git branch -m main
+          git gc
+          git push -f origin main
