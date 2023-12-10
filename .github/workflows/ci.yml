@@ -1,0 +1,76 @@
+name: "ci"
+
+on:
+  repository_dispatch:
+    types: [update-request]
+  workflow_dispatch:
+
+jobs:
+  buildrelease:
+    name: "Build release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "develop"
+          persist-credentials: false
+      - name: "Download main program"
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: "PrepPipe/preppipe-python"
+          tag: "latest"
+          fileName: "preppipe_cli-windows-x64.7z"
+          tarBall: false
+          zipBall: false
+          out-file-path: "."
+      - name: "Extract Main Program"
+        shell: bash
+        run: |
+          7z x preppipe_cli-windows-x64.7z -owindows-x64
+          rm -f preppipe_cli-windows-x64.7z
+      - name: "Download GUI"
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: "PrepPipe/preppipe_gui"
+          tag: "latest"
+          fileName: "preppipe_gui-windows-x64.7z"
+          tarBall: false
+          zipBall: false
+          out-file-path: "."
+      - name: "Extract GUI"
+        shell: bash
+        run: |
+          7z x preppipe_gui-windows-x64.7z -owindows-x64
+          rm -f preppipe_gui-windows-x64.7z
+      - name: "Download ffmpeg"
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: "BtbN/FFmpeg-Builds"
+          tag: "latest"
+          fileName: "ffmpeg-master-latest-win64-lgpl-shared.zip"
+          tarBall: false
+          zipBall: false
+          out-file-path: "."
+      - name: "Extract ffmpeg"
+        shell: bash
+        run: |
+          unzip ffmpeg-master-latest-win64-lgpl-shared.zip "ffmpeg-master-latest-win64-lgpl-shared/bin/*" -d "windows-x64"
+          mv windows-x64/ffmpeg-master-latest-win64-lgpl-shared/bin/* windows-x64/
+          rm -rf windows-x64/ffmpeg-master-latest-win64-lgpl-shared
+          rm -f ffmpeg-master-latest-win64-lgpl-shared.zip
+      - name: "Update main branch"
+        shell: bash
+        run: |
+          git config --global user.email "xsj617603321@gmail.com"
+          git config --global user.name "Shengjie Xu"
+          git checkout --orphan latest_branch
+          git add -A
+          git commit -am "Auto-update"
+          git branch -M main
+          git gc
+      - name: "Push to main"
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PREPPIPE_ALL_IN_ONE_PAT }}
+          branch: "main"
+          force: true
