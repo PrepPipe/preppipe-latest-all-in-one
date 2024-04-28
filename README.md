@@ -14,15 +14,11 @@
 
 ## 如何下载
 
-### Gitee
-![Gitee 下载方式](images/download_gitee.png)
-
-### GitHub
-![GitHub 下载方式](images/download_github.png)
+请在页面右侧 `Releases` 中选择最新版本。
 
 ## 下载后如何使用
 使用方法：
-1. 将ZIP压缩包中您需要的程序部分（如`preppipe-latest-all-in-one-main/windows-x64`）到任意目录下
+1. 将ZIP压缩包中您需要的程序部分（如`preppipe-windows-x64/windows-x64`）到任意目录下
 2. （可选）将 `windows-x64` 改成您想要使用的目录名
 3. 双击该目录下的 `preppipe_gui.exe` （紫色图标）运行启动器，或者以其他您希望的方式使用主程序 `preppipe_cli.exe`。
 

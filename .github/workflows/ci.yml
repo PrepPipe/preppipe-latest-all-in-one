@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           echo "${{steps.download_main.outputs.release_name}}" | cut -d " " -f1 | tee VERSION.txt
-          [ -s VERSION.txt ] && cat VERSION.txt
+          [ -s VERSION.txt ] && echo "PPVERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
       - name: "Extract Main Program"
         shell: bash
         run: |
@@ -64,19 +64,31 @@ jobs:
           mv windows-x64/ffmpeg-master-latest-win64-lgpl-shared/bin/* windows-x64/
           rm -rf windows-x64/ffmpeg-master-latest-win64-lgpl-shared
           rm -f ffmpeg-master-latest-win64-lgpl-shared.zip
-      - name: "Update main branch"
+      - name: "Prepare release archive"
         shell: bash
         run: |
-          git config --global user.email "xsj617603321@gmail.com"
-          git config --global user.name "Shengjie Xu"
-          git checkout --orphan latest_branch
-          git add -A
-          git commit -am "Auto-update"
-          git branch -M main
-          git gc
-      - name: "Push to main"
-        uses: ad-m/github-push-action@master
+          7z a -t7z -mx=9 ./preppipe-windows-x64.7z windows-x64/*
+      - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          github_token: ${{ secrets.PREPPIPE_ALL_IN_ONE_PAT }}
-          branch: "main"
-          force: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "${{ env.PPVERSION }} 整合包 (Release Archive)"
+          files: |
+            ./preppipe-windows-x64.7z
+      #- name: "Update main branch"
+      #  shell: bash
+      #  run: |
+      #    git config --global user.email "xsj617603321@gmail.com"
+      #    git config --global user.name "Shengjie Xu"
+      #    git checkout --orphan latest_branch
+      #    git add -A
+      #    git commit -am "Auto-update"
+      #    git branch -M main
+      #    git gc
+      #- name: "Push to main"
+      #  uses: ad-m/github-push-action@master
+      #  with:
+      #    github_token: ${{ secrets.PREPPIPE_ALL_IN_ONE_PAT }}
+      #    branch: "main"
+      #    force: true

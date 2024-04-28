@@ -7,11 +7,25 @@ jobs:
   deployToSteam:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Read Version
+      - name: "Download release"
+        id: download_release
+        uses: robinraju/release-downloader@v1.10
+        with:
+          repository: "PrepPipe/preppipe-latest-all-in-one"
+          tag: "latest"
+          fileName: "preppipe-windows-x64.7z"
+          tarBall: false
+          zipBall: false
+          out-file-path: "."
+      - name: "Print Version"
+        shell: bash
         run: |
-          echo "PPVERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
-          echo "PPVERSION=${{ env.PPVERSION }}"
+          echo "${{steps.download_release.outputs.release_name}}" | cut -d " " -f1 | tee VERSION.txt
+          [ -s VERSION.txt ] && echo "PPVERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
+      - name: "Extract release"
+        shell: bash
+        run: |
+          7z x preppipe-windows-x64.7z
       - uses: game-ci/steam-deploy@v3
         with:
           username: ${{ secrets.STEAM_USERNAME }}
