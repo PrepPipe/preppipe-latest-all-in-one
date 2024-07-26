@@ -10,9 +10,8 @@ jobs:
     name: "Build release"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          ref: "develop"
           persist-credentials: false
       - name: "Download main program"
         id: download_main
