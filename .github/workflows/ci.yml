@@ -19,7 +19,7 @@ jobs:
         with:
           repository: "PrepPipe/preppipe-python"
           tag: "latest-main"
-          fileName: "preppipe_cli-windows-x64.7z"
+          fileName: "preppipe-windows-x64.7z"
           tarBall: false
           zipBall: false
           out-file-path: "."
@@ -31,8 +31,8 @@ jobs:
       - name: "Extract Main Program"
         shell: bash
         run: |
-          7z x preppipe_cli-windows-x64.7z -owindows-x64
-          rm -f preppipe_cli-windows-x64.7z
+          7z x preppipe-windows-x64.7z -owindows-x64
+          rm -f preppipe-windows-x64.7z
       - name: "Download GUI"
         uses: robinraju/release-downloader@v1.10
         with:
