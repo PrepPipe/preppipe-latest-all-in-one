@@ -47,6 +47,20 @@ jobs:
         run: |
           7z x preppipe_gui-windows-x64.7z -owindows-x64
           rm -f preppipe_gui-windows-x64.7z
+      - name: "Download Documentation"
+        uses: robinraju/release-downloader@v1.10
+        with:
+          repository: "PrepPipe/preppipe-docs"
+          tag: "latest"
+          fileName: "docs.zip"
+          tarBall: false
+          zipBall: false
+          out-file-path: "."
+      - name: "Extract Documentation"
+        shell: bash
+        run: |
+          mkdir -p windows-x64/docs
+          unzip docs.zip -d windows-x64/docs
       - name: "Download ffmpeg"
         uses: robinraju/release-downloader@v1.10
         with:
